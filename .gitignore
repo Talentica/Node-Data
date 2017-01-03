@@ -1,0 +1,14 @@
+node_modules/**
+.*/**
+**/*.js.map
+**/*.js
+bin/**
+typings/**/*.*
+obj/**/*.*
+*.suo
+*.htm
+**/*.orig
+out/**
+coverage/**
+npm-debug.log
+nodedataLog.log
