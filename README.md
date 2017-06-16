@@ -742,9 +742,104 @@ class UserModel {
 ```
 
 The user will have freedom to choose the entity attribute to be validated before save or update.
+## statistics/count API
+Further running ‘http://localhost/statistics/students’ will give:
+```json
+{ 
+  "id": "students", 
+  "properties": [ 
+    { 
+      "name": "count", 
+      "type": "number",
+      "value":15
+    }
+  ] 
+} 
+```
+Further running ‘http://localhost/statistics/’ will give:
+```json
+[{ 
+  "id": "students", 
+  "properties": [ 
+    { 
+      "name": "count", 
+      "type": "number",
+      "value":15
+    }
+  ] 
+},
+{ 
+  "id": "teachers", 
+  "properties": [ 
+    { 
+      "name": "count", 
+      "type": "number",
+      "value":5
+    }
+  ] 
+},
+] 
+```
+where condition is supported
 
 ## Diffrence between waterline and Node-Data
 The waterline is a greate opensource porject and has been an inspiration for us but there is a big difference between Node-data and waterline . The Node-Data is not an another ORM , its a wrapper over famous ORMs like(mongoose , seqlize , neo4j) . Node-Data provides an abstraction over these famous ORMs so that Developer don't have to deal with them individually and they can write models and transaction over these ORMs with same codebase. 
+
+## pure js project supported
+Node-data now is fully supported inside a normal js project , no typescript dependency (check BMMaster branch for template)
+
+## bulk and performance improvements
+## Transaction 
+   no transaction on documents(@document) side , @transaction is supported on sql entities(@entity) repositories
+   if calling a document transaction within a method with @transaction , it will not rollback and developer need to handle this.
+## process control
+```typescript
+    @processStartEnd({ action: "importLead", type: "project", indexofArgumentForTargetObjectId: 1 })
+    public read(filePath: string, projectId, toDelete?) {
+    }
+```
+## Workers and Async Api
+```typescript
+    @worker()
+    public read(filePath: string, projectId, toDelete?) {
+    }
+```
+quick response with  
+```json
+{ 
+  "id": "3423423",
+  "processName":"",
+  "status":"inprogress"
+  "subscriptionProperties": [ 
+    { 
+      "channel_id": "3423", 
+      "type": "pushnotification",
+      "event_id":15,
+      "action_id":16
+    },
+     { 
+      "url":"http://localhost:8080/data/process/3dfgs3/",
+      "token":"324324fsdfs32rfsd",
+      "type": "rest",
+      "metadata":{}
+    }
+  ] 
+} 
+```
+
+## Messageing
+in a service class
+```typescript
+    @producer(topic,partition)
+    public read(filePath: string, projectId, toDelete?) {
+    }
+```
+```typescript
+    @consumer(topic,partition,instances)
+    public read(filePath: string, projectId, toDelete?) {
+    }
+```
+
 
 [JIRA URL] (https://node-data.atlassian.net/secure/RapidBoard.jspa?rapidView=2&view=detail) 
 
