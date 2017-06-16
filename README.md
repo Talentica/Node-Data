@@ -789,6 +789,21 @@ The waterline is a greate opensource porject and has been an inspiration for us 
 Node-data now is fully supported inside a normal js project , no typescript dependency (check BMMaster branch for template)
 
 ## bulk and performance improvements
+## Entity Manager
+```typescript
+preUpdate(params: EntityActionParam): Q.Promise<EntityActionParam> {
+        return Q.resolve(params);
+    }
+
+postUpdate(params: EntityActionParam): Q.Promise<EntityActionParam> {
+        return Q.when(params);
+    }
+export interface EntityActionParam {
+    inputEntity?: any;
+    oldPersistentEntity?: any;
+    newPersistentEntity?: any
+}    
+```   
 ## Transaction 
    no transaction on documents(@document) side , @transaction is supported on sql entities(@entity) repositories
    if calling a document transaction within a method with @transaction , it will not rollback and developer need to handle this.
