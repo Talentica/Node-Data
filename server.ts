@@ -22,7 +22,7 @@ data.generateSchema();
 seqData.sequelizeService.connect();
 seqData.generateSchema();
 
-var app:any = express();
+var app = express();
 Main.register(app);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');

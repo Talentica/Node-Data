@@ -1,4 +1,4 @@
-﻿/// <reference path="../../security/auth/security-utils.ts" />
+/// <reference path="../../security/auth/security-utils.ts" />
 import {router} from '../exports';
 import {MetaUtils} from "../metadata/utils";
 import {DecoratorType} from '../enums';
@@ -9,17 +9,26 @@ import {IAssociationParams} from '../decorators/interfaces';
 import * as Enumerable from 'linq';
 import * as securityUtils from '../../security/auth/security-utils';
 
-
-export class metaDataObject {
+export interface metaDataObject {
     id?: string;
+    type?: string;
     properties?: Array<metaDataInnerObject>
 }
 
-export class metaDataInnerObject {
+export interface metaDataInnerObject {
     name?: string;
     type?: string; //"string","number","date","Object","Array"
+    subtype?: string;
     metadata?: metaDataObject
     pathFromRoot?: Array<any>
+}
+
+
+export interface metaDataMapping {
+    from: metaDataObject;
+    to: metaDataObject;
+    type?: string; // "data" default , "name"
+    innerMapping?: Array<metaDataMapping>
 }
 
 export class MetadataController {
@@ -37,7 +46,7 @@ export class MetadataController {
         });
 
         router.get(this.path + '/:type', securityUtils.ensureLoggedIn(), (req, res) => {
-            this.sendresult(req, res, this.getMetadata(req));
+            this.sendresult(req, res, this.getMetadata(req, req.params.type));
         });
     }
 
@@ -62,43 +71,14 @@ export class MetadataController {
         return metaData;
     }
 
-    private getMetadata(req): any {
-
-        var type = req.params.type;
-
-        if (this.metaData[req.params.type])
-            return this.metaData[req.params.type];
-
-        var repo = GetRepositoryForName(req.params.type);
-        if (!repo)
-            return null;
-
-        var metas = MetaUtils.getMetaData(repo.getEntity());
-        //var props: { [key: string]: MetaData } = <any>{};
-        var props = [];
-        var metaData = {};
-        var properties = [];
-        Enumerable.from(metas).forEach(x=> {
-            var m = x as MetaData;
-            if (m.decoratorType == DecoratorType.PROPERTY) {
-                var params: IAssociationParams = <IAssociationParams>m.params;
-                var info = {};
-                info['name'] = m.propertyKey;
-                if (params && params.rel) {
-                    var relMeta = this.getProtocol(req) + '://' + req.get('host') + this.path + '/' + params.rel;
-                    info['type'] = m.propertyType.isArray ? [relMeta] : relMeta;
-                }
-                else {
-                    info['type'] =  m.propertyType.isArray ? [m.getType().name] : m.getType().name;
-                }
-                properties.push(info);
-                props.push(m.propertyKey);
-            }
-        });
-        metaData['id'] = type;
-        metaData['properties'] = properties;
-        this.metaData[req.params.type] = metaData;
-        return this.metaData[req.params.type];
+    public getMetadata(req, type): any {
+        
+        if (this.metaData[type])
+            return this.metaData[type];
+        var baseRelMeta = this.getProtocol(req) + '://' + req.get('host') + this.path + '/'
+        var metadata:any = MetaUtils.getDescriptiveMetadata(type, baseRelMeta);
+        this.metaData[type] = metadata;
+        return metadata;
     }
 
     private getProtocol(req) : string{
@@ -111,3 +91,5 @@ export class MetadataController {
     }
 
 }
+
+export default MetadataController;

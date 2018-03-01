@@ -2,8 +2,10 @@
 import * as Sequelize from "sequelize";
 import Q = require('q');
 import {IEntityService} from '../core/interfaces/entity-service';
-import { MetaUtils } from "../core/metadata/utils";
+import {MetaUtils} from "../core/metadata/utils";
 import {pathRepoMap} from '../core/dynamic/model-entity';
+import {QueryOptions} from '../core/interfaces/queryOptions';
+
 
 import {Decorators as CoreDecorators} from '../core/constants';
 //import {pathRepoMap} from './schema';
@@ -70,7 +72,7 @@ class SequelizeService implements IEntityService {
         this._relationCollection.push(relationToDictionary);
     }
 
-    private getSequelizeModel(repoPath: string) {
+    getModel(repoPath: string, dynamicName?: string) {
         try {
             var schemaNamefromPathRepomap = pathRepoMap[repoPath].schemaName;
             return this._schemaCollection[schemaNamefromPathRepomap];
@@ -79,8 +81,8 @@ class SequelizeService implements IEntityService {
         }
     }
 
-    bulkPost(repoPath: string, objArr: Array<any>): Q.Promise<any> {
-        return this.getSequelizeModel(repoPath).bulkCreate(objArr);
+    bulkPost(repoPath: string, objArr: Array<any>, batchSize?: number): Q.Promise<any> {
+        return this.getModel(repoPath).bulkCreate(objArr, batchSize);
     }
 
     bulkPutMany(repoPath: string, objIds: Array<any>, obj: any): Q.Promise<any> {
@@ -88,30 +90,55 @@ class SequelizeService implements IEntityService {
     }
 
     bulkDel(repoPath: string, objArr: Array<any>): Q.Promise<any> {
-        return this.getSequelizeModel(repoPath).destroy({ where: { id: objArr } });
+        return this.getModel(repoPath).destroy({ where: { id: objArr } });
     }
 
-    bulkPut(repoPath: string, objArr: Array<any>): Q.Promise<any> {
-        return this.getSequelizeModel(repoPath).bulkUpdate(objArr);
+    bulkPut(repoPath: string, objArr: Array<any>,batchSize?: number): Q.Promise<any> {
+        return this.getModel(repoPath).bulkUpdate(objArr, batchSize);
+    }
+
+    bulkPatch(repoPath: string, objArr: Array<any>): Q.Promise<any> {
+        return this.getModel(repoPath).bulkUpdate(objArr);
     }
 
     findAll(repoPath: string): Q.Promise<any> {
-        return this.getSequelizeModel(repoPath).findAll().then(result => {
+        return this.getModel(repoPath).findAll().then(result => {
             if (!result) return null;
             var finalOutput = Enumerable.from(result).select((x:any) => x.dataValues).toArray();// result.forEach(x => x.dataValues).toArray();
             return finalOutput;
         });
     }
 
-    findWhere(repoPath: string, query, selectedFields?: Array<string>): Q.Promise<any> {
-        return this.getSequelizeModel(repoPath).findAll(query).then(result => {
+    findWhere(repoPath: string, query, selectedFields?: Array<string>, queryOptions?: QueryOptions, toLoadChilds?: boolean): Q.Promise<any> {
+        return this.getModel(repoPath).findAll(query).then(result => {
             return result.dataValues;
+        });
+    }
+
+    //This is not testest yet
+    //TODO: add test case for this
+    countWhere(repoPath: string, query): Q.Promise<any> {
+        return this.getModel(repoPath).findAndCountAll(query).then(result => {
+            return result;
+        });
+    }
+    
+
+    //This is not testest yet
+    //TODO: add test case for this
+    distinctWhere(repoPath: string, query): Q.Promise<any> {
+        if (!query) {
+            query = {};
+        }
+        query.distinct = true;
+        return this.getModel(repoPath).findAndCountAll(query).then(result => {
+            return result;
         });
     }
 
     findOne(repoPath: string, id): Q.Promise<any> {
 
-        let schemaModel = this.getSequelizeModel(repoPath);
+        let schemaModel = this.getModel(repoPath);
         let primaryKey = schemaModel.primaryKeyAttribute;
         var cond = {};
         cond[primaryKey] = id;
@@ -125,18 +152,18 @@ class SequelizeService implements IEntityService {
     }
 
     findByField(repoPath: string, fieldName, value): Q.Promise<any> {
-        return this.getSequelizeModel(repoPath).find({ where: { fieldName: value } });
+        return this.getModel(repoPath).find({ where: { fieldName: value } });
     }
 
     findMany(repoPath: string, ids: Array<any>) {
-        return this.getSequelizeModel(repoPath).findAll({ where: { id: ids } });
+        return this.getModel(repoPath).findAll({ where: { id: ids } });
     }
 
     findChild(repoPath: string, id, prop): Q.Promise<any> {
-        return this.getSequelizeModel(repoPath).find({
+        return this.getModel(repoPath).find({
             where: { id: id },
             include: [
-                { model: this.getSequelizeModel(prop), as: prop }
+                { model: this.getModel(prop), as: prop }
             ]
         }).then(
             function (entity) {
@@ -150,19 +177,19 @@ class SequelizeService implements IEntityService {
      * @param obj
      */
     post(repoPath: string, obj: any): Q.Promise<any> {
-        return this.getSequelizeModel(repoPath).create(obj);
+        return this.getModel(repoPath).create(obj);
     }
 
     put(repoPath: string, id: any, obj: any): Q.Promise<any> {
-        return this.getSequelizeModel(repoPath).update(obj, { where: { id: id } });
+        return this.getModel(repoPath).update(obj, { where: { id: id } });
     }
 
     del(repoPath: string, id: any): Q.Promise<any> {
-        return this.getSequelizeModel(repoPath).destroy({ where: { id: id } });
+        return this.getModel(repoPath).destroy({ where: { id: id } });
     }
 
     patch(repoPath: string, id: any, obj): Q.Promise<any> {
-        return this.getSequelizeModel(repoPath).update(obj, { where: { id: id } });
+        return this.getModel(repoPath).update(obj, { where: { id: id } });
     }
 
     private getAssociationForSchema(model: any, schema: any) {

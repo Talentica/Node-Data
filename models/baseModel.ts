@@ -1,4 +1,4 @@
-﻿import {onetomany, manytoone, manytomany} from '../core/decorators';
+﻿import {onetomany, manytoone, manytomany, transient} from '../core/decorators';
 import {field, document} from '../mongoose/decorators';
 import {Strict} from '../mongoose/enums';
 
@@ -8,6 +8,24 @@ export class BaseModel {
 
     @field()
     name: any;
+
+    /*
+       nodedata internal use for caching, use for findWhere case
+   */
+    @transient()
+    __selectedFindWhere: boolean;
+
+    /*
+        nodedata internal use for caching, to marked as partial load for findMany (egar load case not load)
+    */
+    @transient()
+    __partialLoaded: boolean;
+
+    /*
+        nodedata internal use for caching, to marked as fully load
+    */
+    @transient()
+    __FullyLoaded: boolean;
 }
 
 export default BaseModel;

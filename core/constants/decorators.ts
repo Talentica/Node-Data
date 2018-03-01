@@ -20,6 +20,25 @@ export class Decorators {
     public static REQUIRED = 'required';
     public static TRANSIENT = 'transient';
     public static ALLOWANONYMOUS = 'allowanonymous';
+    public static WORKER = 'worker';
+    public static OPTIMISTICLOCK = 'OptimisticLocking';
+    public static PROMISABLE = 'Promisable';
+    public static PROCESS_START = 'processStart';
+    public static PROCESS_END = 'processEnd';
+    public static PROCESS_START_AND_END = 'processStartEnd';
+}
+
+export enum ExportTypes {
+
+    NONE = 0,
+    REST = 1,
+    WS = 2,
+    WS_BROAD_CAST = 4,
+    PUB_SUB = 8,
+    WS_WS_BROAD_CAST_PUB_SUB=14,
+    ALL = 15,
+
+
 }
 
 export var RelationDecorators: Array<string> = [Decorators.ONETOONE, Decorators.ONETOMANY, Decorators.MANYTOONE, Decorators.MANYTOMANY];

@@ -6,8 +6,8 @@ import Q = require("q");
 import * as Utils from './utils';
 import {MetaUtils} from './metadata/utils'
 import {IEntityService} from './interfaces/entity-service';
-//var cls = require('continuation-local-storage');
-//var ns = cls.createNamespace('session');
+//import {PrincipalContext} from '../security/auth/principalContext';
+//var ns = PrincipalContext.getSession();
 var domain = require('../security/auth/domain');
 
 //import linq = require('../typings/linq/linq');
@@ -31,18 +31,22 @@ function readIgnore(file: string, stats: fs.Stats) {
 let _appRoot = process.cwd();
 
 class Dynamic {
-    constructor(config: any, securityConfig: any) {
+    constructor(config: any, securityConfig: any,server?:any) {
         Utils.config(config);
         Utils.securityConfig(securityConfig);
         config = config;
         securityConfig = securityConfig;
-        var files = this.scanDirectories();
+        let ignorePaths = config.Config && config.Config.ignorePaths || [];
+        let internalIgnorePaths = config.Config && config.Config.internalIgnorePaths || [];
+        ignorePaths = [...ignorePaths, ...internalIgnorePaths];
+        var files = this.scanDirectories(ignorePaths);
         this.loadComponents(files);
-        this.initialize(files);
+        this.initialize(files, server);
     }
 
-    scanDirectories(): Array<string> {
-        return recursiveReadDir(_appRoot, [readIgnore]);
+    scanDirectories(ignorePaths: Array<string|Function>): Array<string> {
+        ignorePaths.push(readIgnore);
+        return recursiveReadDir(_appRoot, ignorePaths);
         //return Q.nfapply(recursiveReadDir, [_appRoot, [readIgnore]]);
     }
 
@@ -50,6 +54,9 @@ class Dynamic {
         Enumerable.from(files)
             .forEach(x => {
                 try {
+                    if (x.indexOf("gulpfile") > -1) {
+                        return;
+                    }
                     var route = path.resolve(x.substring(0, x.lastIndexOf('.')));
                     require(route);
                 } catch (e) {
@@ -59,14 +66,14 @@ class Dynamic {
             });
     }
 
-    initialize(files: Array<string>) {
-        new Initalize(files);
+    initialize(files: Array<string>, server: any) {
+        new Initalize(files,server);
     }
 }
 
 module.exports = function (config: any, securityConfig: any, appRoot?: string,
     entityServiceInst?: IEntityService,
-    sqlServerInst?: IEntityService) {
+    sqlServerInst?: IEntityService,server?:any) {
     // application root (where we scan the components) set priority: 
     // 1. User provided 
     // 2. Environment Variable 
@@ -74,7 +81,7 @@ module.exports = function (config: any, securityConfig: any, appRoot?: string,
     _appRoot = appRoot || process.env.APP_ROOT || process.cwd();
     //Utils.entityService(entityServiceInst);
     //Utils.sqlEntityService(sqlServerInst);
-    new Dynamic(config, securityConfig);
+    new Dynamic(config, securityConfig,server);
     MetaUtils.refreshDerivedObjectsMetadata();
 }
 
@@ -86,14 +93,14 @@ export function addComponent(comp: any) {
 
 export function initialize(config: any, securityConfig: any, appRoot?: string,
     entityServiceInst?: IEntityService,
-    sqlServerInst?: IEntityService) {
+    sqlServerInst?: IEntityService, server?: any) {
     // application root (where we scan the components) set priority: 
     // 1. User provided 
     // 2. Environment Variable 
     // 3. Current working directory
     _appRoot = appRoot || process.env.APP_ROOT || process.cwd();
     //Utils.entityService(entityServiceInst);
-    new Dynamic(config, securityConfig);
+    new Dynamic(config, securityConfig,server);
     //Utils.sqlEntityService(sqlServerInst);
     components.forEach(x => {
         x.default();
@@ -102,11 +109,11 @@ export function initialize(config: any, securityConfig: any, appRoot?: string,
 
 module.exports.register = function (app) {
     app.use(domain.middleware('context'));
-    //app.use(function (req, res, next) {
-    //    ns.bindEmitter(req);
-    //    ns.bindEmitter(res);
-    //    ns.run(function () {
-    //        next();
-    //    });
-    //});
+     //app.use(function (req, res, next) {
+     //    ns.bindEmitter(req);
+     //    ns.bindEmitter(res);
+     //     ns.run(function () {
+     //       next();
+     //     });
+     //});
 }

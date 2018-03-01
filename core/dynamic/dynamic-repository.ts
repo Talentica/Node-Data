@@ -11,28 +11,37 @@ import {pathRepoMap, getEntity, getModel} from './model-entity';
 import {InstanceService} from '../services/instance-service';
 import {MetaUtils} from "../metadata/utils";
 import {Decorators} from '../constants';
+import {QueryOptions} from '../interfaces/queryOptions';
+import * as utils from '../../mongoose/utils';
+import {MetaData} from '../metadata/metadata';
+
 
 var modelNameRepoModelMap: { [key: string]: IDynamicRepository } = {};
- 
+
 export function GetRepositoryForName(name: string): IDynamicRepository {
     return modelNameRepoModelMap[name]
 }
 
 export interface IDynamicRepository {
     getEntity();
-    getModel();
+    getModel(dynamicName?: string);
     modelName();
     getEntityType(): any;
+    getRootRepo(): IDynamicRepository;
 
     bulkPost(objArr: Array<any>);
-    bulkPut(objArr: Array<any>);
+    bulkPut(objArr: Array<any>, batchSize?: number, donotLoadChilds?: boolean);
+    bulkPatch(objArr: Array<any>);
     bulkPutMany(objIds: Array<any>, obj: any);
     bulkDel(objArr: Array<any>);
 
-    findOne(id: any): Q.Promise<any>;
+    findOne(id: any, donotLoadChilds?: boolean): Q.Promise<any>;
     findMany(ids: Array<any>, toLoadEmbeddedChilds?: boolean): Q.Promise<any>;
     findAll(): Q.Promise<any>;
-    findWhere(query, selectedFields?: Array<any>): Q.Promise<any>;
+    //findWhere(query, selectedFields?: Array<any>): Q.Promise<any>;
+    findWhere(query, selectedFields?: Array<any>, queryOptions?: QueryOptions): Q.Promise<any>;
+    countWhere(query);
+    distinctWhere(query);
     findByField(fieldName, value): Q.Promise<any>;
     findChild(id, prop): Q.Promise<any>;
 
@@ -40,50 +49,162 @@ export interface IDynamicRepository {
     post(obj: any): Q.Promise<any>;
     delete(id: any);
     patch(id: any, obj);
+    setRestResponse(obj: any);
+    getShardCondition();
+    setMessanger(obj: any);
+    getMessanger(): any;
+    setMetaData(meta: MetaData);
+    getMetaData(): MetaData;
+    castToPrimaryKey(id): any;
+
+    onMessage(message: any);
 }
 
 export class DynamicRepository implements IDynamicRepository {
     private path: string;
     private model: any;
-    private metaModel: any;
+    private metaModel: MetaData;
     private entity: any;
     private entityService: IEntityService;
+    private rootLevelRep: IDynamicRepository;
+    private messenger: any;
     //private modelRepo: any;
 
-    public initialize(repositoryPath: string, target: Function | Object, model?: any) {
+    public initialize(repositoryPath: string, target: Function | Object, model?: any, rootRepo?: IDynamicRepository) {
         //console.log(schema);
         this.path = repositoryPath;
         this.entity = target;
+        this.rootLevelRep = rootRepo;
+
+
+
+
+        if (target instanceof DynamicRepository) {
+            target.rootLevelRep = rootRepo;
+        }
         modelNameRepoModelMap[this.path] = this;
+    }
+
+    public setMetaData(meta: MetaData) {
+        this.metaModel = meta;
+    }
+
+    public getMetaData(): MetaData {
+        return this.metaModel;
+    }
+
+    public setMessanger(msgner?: any) {
+        this.messenger = msgner;
+        if (this.rootLevelRep) {
+            this.rootLevelRep.setMessanger(msgner)
+        }
+    }
+
+    public getMessanger() {
+        return this.messenger;
     }
 
     public getEntity() {
         return getEntity(pathRepoMap[this.path].schemaName);
     }
 
-    public getModel() {
-        return getModel(pathRepoMap[this.path].schemaName);
+    public getModel(dynamicName?: string) {
+        return Utils.entityService(pathRepoMap[this.path].modelType).getModel(this.path, dynamicName);
     }
 
-    public bulkPost(objArr: Array<any>) {
+    public getRootRepo() {
+        return this.rootLevelRep;
+    }
+
+    public bulkPost(objArr: Array<any>, batchSize?: number) {
         var objs = [];
         objArr.forEach(x => {
             objs.push(InstanceService.getInstance(this.getEntity(), null, x));
         });
-        return Utils.entityService(pathRepoMap[this.path].modelType).bulkPost(this.path, objs);
+        return Utils.entityService(pathRepoMap[this.path].modelType).bulkPost(this.path, objs, batchSize).then(result => {
+            if (result && result.length > 0) {
+                var res = [];
+               
+                result.forEach(x => {
+                    res.push(InstanceService.getObjectFromJson(this.getEntity(), x));
+                });
+                this.sendAllMessagesUsingMessenger(result);
+                return res;
+            }
+            return result;
+        });
     }
 
-    public bulkPut(objArr: Array<any>) {
+    
+
+    public bulkPut(objArr: Array<any>, batchSize?: number, donotLoadChilds?: boolean) {
         var objs = [];
         objArr.forEach(x => {
             objs.push(InstanceService.getInstance(this.getEntity(), null, x));
         });
-        return Utils.entityService(pathRepoMap[this.path].modelType).bulkPut(this.path, objs);
+        return Utils.entityService(pathRepoMap[this.path].modelType).bulkPut(this.path, objs, batchSize, donotLoadChilds).then(result => {
+            if (result && result.length > 0) {
+                var res = [];
+               
+                result.forEach(x => {
+                    res.push(InstanceService.getObjectFromJson(this.getEntity(), x));
+                });
+                this.sendAllMessagesUsingMessenger(result);
+                return res;
+            }
+            return result;
+        });
+    }
+
+    private sendAllMessagesUsingMessenger(entities: Array<any>) {
+        if (!this.messenger) {
+            return;
+        }
+        let messagesToSend = [];
+
+        this.messenger.chekAndSend(this.path, entities);
+
+        //entities.forEach(x => {           
+        //    if (this.messenger) {
+        //        messagesToSend.push();
+        //    }
+        //})
+        //if (this.messenger && messagesToSend.length) {
+        //    Q.allSettled(messagesToSend).then((sucess) => { console.log("send sucess") })
+        //        .catch((err) => { console.log("error in sending message bulkPost", err) });
+        //}
+    }
+
+    public bulkPatch(objArr: Array<any>) {
+        var objs = [];
+        objArr.forEach(x => {
+            objs.push(InstanceService.getInstance(this.getEntity(), null, x));
+        });
+        return Utils.entityService(pathRepoMap[this.path].modelType).bulkPatch(this.path, objs).then(result => {
+            if (result && result.length > 0) {
+                var res = [];
+                result.forEach(x => {
+                    res.push(InstanceService.getObjectFromJson(this.getEntity(), x));
+                });
+                this.sendAllMessagesUsingMessenger(result);
+                return res;
+            }
+            return result;
+        });
     }
 
     public bulkPutMany(objIds: Array<any>, obj: any) {
-        obj = InstanceService.getInstance(this.getEntity(), null, obj);
-        return Utils.entityService(pathRepoMap[this.path].modelType).bulkPutMany(this.path, objIds, obj);
+        return Utils.entityService(pathRepoMap[this.path].modelType).bulkPutMany(this.path, objIds, obj).then(result => {
+            if (result && result.length > 0) {
+                var res = [];
+                result.forEach(x => {
+                    res.push(InstanceService.getObjectFromJson(this.getEntity(), x));
+                });
+                this.sendAllMessagesUsingMessenger(result);
+                return res;
+            }
+            return result;
+        });
     }
 
     public bulkDel(objArr: Array<any>) {
@@ -114,8 +235,21 @@ export class DynamicRepository implements IDynamicRepository {
         });
     }
 
-    public findWhere(query, selectedFields?: Array<any>): Q.Promise<any> {
-        return Utils.entityService(pathRepoMap[this.path].modelType).findWhere(this.path, query, selectedFields).then(result => {
+    // public findWhere(query, selectedFields?: Array<any>): Q.Promise<any> {
+    //     return Utils.entityService(pathRepoMap[this.path].modelType).findWhere(this.path, query, selectedFields).then(result => {
+    //         if (result && result.length > 0) {
+    //             var res = [];
+    //             result.forEach(x => {
+    //                 res.push(InstanceService.getObjectFromJson(this.getEntity(), x));
+    //             });
+    //             return res;
+    //         }
+    //         return result;
+    //     });
+    // }
+
+    public findWhere(query, selectedFields?: Array<any>, queryOptions?: QueryOptions, toLoadChilds?: boolean): Q.Promise<any> {
+        return Utils.entityService(pathRepoMap[this.path].modelType).findWhere(this.path, query, selectedFields, queryOptions, toLoadChilds).then(result => {
             if (result && result.length > 0) {
                 var res = [];
                 result.forEach(x => {
@@ -127,27 +261,63 @@ export class DynamicRepository implements IDynamicRepository {
         });
     }
 
-    public findOne(id) {
-        return Utils.entityService(pathRepoMap[this.path].modelType).findOne(this.path, id).then(result => {
+    public countWhere(query) {
+        return Utils.entityService(pathRepoMap[this.path].modelType).countWhere(this.path, query).then(result => {
+            return result;
+        });
+    }
+
+    public distinctWhere(query) {
+        return Utils.entityService(pathRepoMap[this.path].modelType).distinctWhere(this.path, query).then(result => {
+            return result;
+        });
+    }
+
+
+    public findOne(id, donotLoadChilds?: boolean) {
+        if (!utils.isBasonOrStringType(id)) {
+            let result = id;
+            return Q.when(InstanceService.getObjectFromJson(this.getEntity(), result));
+        }
+        else {
+            return Utils.entityService(pathRepoMap[this.path].modelType).findOne(this.path, id, donotLoadChilds).then(result => {
+                if (result)
+                    return InstanceService.getObjectFromJson(this.getEntity(), result);
+                return result;
+            });
+        }
+    }
+
+    public findByField(fieldName, value): Q.Promise<any> {
+        return Utils.entityService(pathRepoMap[this.path].modelType).findByField(this.path, fieldName, value).then(result => {
             return InstanceService.getObjectFromJson(this.getEntity(), result);
         });
     }
 
-    public findByField(fieldName, value): Q.Promise<any> {
-        return Utils.entityService(pathRepoMap[this.path].modelType).findByField(this.path, fieldName, value);
-    }
-
     public findMany(ids: Array<any>, toLoadEmbeddedChilds?: boolean) {
-        return Utils.entityService(pathRepoMap[this.path].modelType).findMany(this.path, ids, toLoadEmbeddedChilds).then(result => {
+        if (!utils.isBasonOrStringType(ids[0])) {
+            let result = ids;
             if (result && result.length > 0) {
                 var res = [];
                 result.forEach(x => {
                     res.push(InstanceService.getObjectFromJson(this.getEntity(), x));
                 });
-                return res;
+                return Q.when(res);
             }
-            return result;
-        });
+            return Q.when(result);
+        }
+        else {
+            return Utils.entityService(pathRepoMap[this.path].modelType).findMany(this.path, ids, toLoadEmbeddedChilds).then(result => {
+                if (result && result.length > 0) {
+                    var res = [];
+                    result.forEach(x => {
+                        res.push(InstanceService.getObjectFromJson(this.getEntity(), x));
+                    });
+                    return res;
+                }
+                return result;
+            });
+        }
     }
 
     public findChild(id, prop): Q.Promise<any> {
@@ -176,21 +346,69 @@ export class DynamicRepository implements IDynamicRepository {
      */
     public post(obj: any): Q.Promise<any> {
         obj = InstanceService.getInstance(this.getEntity(), null, obj);
-        return Utils.entityService(pathRepoMap[this.path].modelType).post(this.path, obj);
+        return Utils.entityService(pathRepoMap[this.path].modelType).post(this.path, obj).then(result => {
+            if (result) {
+                if (this.messenger) {
+                    this.messenger.chekAndSend(this.path, result);
+                }
+            }
+            return result;
+        });
     }
 
     public put(id: any, obj: any) {
         obj = InstanceService.getInstance(this.getEntity(), id, obj);
-        return Utils.entityService(pathRepoMap[this.path].modelType).put(this.path, id, obj);
+        return Utils.entityService(pathRepoMap[this.path].modelType).put(this.path, id, obj).then(result => {
+            let retVal = InstanceService.getObjectFromJson(this.getEntity(), result);
+            if (retVal) {
+                if (this.messenger) {
+                    this.messenger.chekAndSend(this.path, retVal);
+                }
+            }
+            return retVal;
+        });
     }
-        
+
     public delete(id: any) {
         return Utils.entityService(pathRepoMap[this.path].modelType).del(this.path, id);
     }
 
     public patch(id: any, obj) {
         obj = InstanceService.getInstance(this.getEntity(), id, obj);
-        return Utils.entityService(pathRepoMap[this.path].modelType).patch(this.path, id, obj);;
+        return Utils.entityService(pathRepoMap[this.path].modelType).patch(this.path, id, obj).then(result => {
+            let retVal = InstanceService.getObjectFromJson(this.getEntity(), result);
+            if (retVal) {
+                if (this.messenger) {
+                    this.messenger.chekAndSend(this.path, retVal);
+                }
+            }
+            return retVal;
+        });
+    }
+    /**
+ * Below interceptor is used to add/remove some of the properties of model before sending it to client.
+ * e.g. samplDocument = {"id" : "23","name" : "test","companyName" : "com"}, here if we don't want to pass companyName to client then it can be removed in this interceptor.
+ */
+    public setRestResponse(obj: any) {
+
     }
 
+    // This function should return the additional shard condition which will be added in all the query to avoid the queries for cross sharding
+    public getShardCondition() {
+        return null;
+    }
+
+    public castToPrimaryKey(id) {
+        let primaryKey = '_id';
+        let modelRepo = this.getEntityType();
+        let decoratorFields = MetaUtils.getMetaData(modelRepo.model.prototype, Decorators.FIELD, primaryKey);
+        if (decoratorFields.params.primary && decoratorFields.getType() == Number) {
+            return Number.parseInt(id);
+        }
+        return id;
+    }
+
+    public onMessage(message: any) {
+        return;
+    }
 }

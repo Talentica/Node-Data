@@ -1,4 +1,4 @@
-﻿import {ParamTypeCustom} from './param-type-custom';
+import {ParamTypeCustom} from './param-type-custom';
 import {DecoratorType} from '../enums';
 import {winstonLog} from '../../logging/winstonLog';
 import {Decorators, MetadataConstants} from '../constants';
@@ -12,6 +12,11 @@ import {IAssociationParams} from '../decorators/interfaces/association-params';
 import {IRepositoryParams} from '../decorators/interfaces/repository-params';
 
 let _metadataRoot: MetaRoot = new Map<Function | Object, DecoratorMetaData>();
+let _nameAndTargetMapping: any = {};
+let _documnetNameAndTargetMapping: any = {};
+let _decoratorsCache: any = {};
+
+let childProcessId:any;
 
 export function metadataRoot(metadataRoot?): MetaRoot {
     if (metadataRoot !== undefined) {
@@ -42,19 +47,25 @@ export function getMetaPropKey(decoratorType, propertyKey?, paramIndex?) {
 }
 
 interface IMetadataHelper {
+    childProcessId:any;
     addMetaData(target: Object | Function, metaOptions: IMetaOptions): boolean;
 
     getMetaData(target: Object): Array<MetaData>;
+    getMetaDataFromType(modelType: string): Array<MetaData>;
     getMetaData(target: Object, decorator: string): Array<MetaData>;
     getMetaData(target: Object, decorator: string, propertyKey: string): MetaData;
     getMetaData(target: Object, decorator: string, propertyKey: string, paramIndex: number): MetaData;
     getMetaDataForDecorators(decorators: Array<string>): Array<{ target: Object, metadata: Array<MetaData> }>;
     getMetaDataForPropKey(target: Object, propertyKey?: string): Array<MetaData>;
     getMetaDataForPropKey(target: Object, propertyKey?: string, paramIndex?: number): Array<MetaData>;
+    getMetaDataFromName(modelName: string): Array<any>;
+    getMetaDataFromDecoratorType(target: Object, type: DecoratorType): Array<any>;
     refreshDerivedObjectsMetadata();
+    getDescriptiveMetadata(type, baseRelMeta, recursionLevel?: number): any;
 }
 
 class MetadataHelper {
+    public static childProcessId:any;
     /**
      * Add any encountered metadata to the metadata root for later usage.
      * @param {(Object|Function)} target The function or function prototype where decorator is defined.
@@ -75,6 +86,14 @@ class MetadataHelper {
         if (!metaOptions.propertyKey && (metaOptions.decoratorType === DecoratorType.PROPERTY || metaOptions.decoratorType === DecoratorType.METHOD)) {
             winstonLog.logError('propertyKey cannot be null or undefined for method/property decorator');
             throw TypeError('propertyKey cannot be null or undefined for method/property decorator');
+        }
+        if ((<any>target).name) {
+            _nameAndTargetMapping[(<any>target).name] = target;
+        } else if (target.constructor.name) {
+            _nameAndTargetMapping[(<any>target).constructor.name] = target;
+        }
+        if (metaOptions.decorator == "document" && metaOptions.params && metaOptions.params.name ) {
+            _documnetNameAndTargetMapping[metaOptions.params.name] = target;
         }
 
         let metaPropKey = getMetaPropKey(metaOptions.decoratorType, metaOptions.propertyKey, metaOptions.paramIndex);
@@ -113,6 +132,21 @@ class MetadataHelper {
             case 3: return MetadataHelper.getMetaDataForTargetDecoratorAndPropKey(DecoratorType.METHOD, target, decorator, propertyKey, paramIndex);
             case 4: return MetadataHelper.getMetaDataForTargetDecoratorAndPropKey(DecoratorType.PARAM, target, decorator, propertyKey, paramIndex);
         }
+    }
+    
+     public static getMetaDataFromName(modelName: string): Array<any> {
+
+        return Object.keys(_documnetNameAndTargetMapping).
+            filter((key) => _documnetNameAndTargetMapping[key].constructor.name == modelName)
+        
+    }
+
+    public static getMetaDataFromType(modelType: string): Array<MetaData> {
+        if (_documnetNameAndTargetMapping[modelType])
+            return MetadataHelper.getMetaDataForTarget(_documnetNameAndTargetMapping[modelType]);
+
+        if (_nameAndTargetMapping[modelType])
+            return MetadataHelper.getMetaDataForTarget(_nameAndTargetMapping[modelType]);
     }
 
     /**
@@ -177,7 +211,8 @@ class MetadataHelper {
                             params: prop.params,
                             type: prop.propertyType,
                             returnType: prop.returnType,
-                            paramTypes: prop.paramTypes
+                            paramTypes: prop.paramTypes,
+                            modelType: prop.modelType
                         });
                 });
                 pro = pro[proto];
@@ -203,6 +238,31 @@ class MetadataHelper {
             .toArray();
     }
 
+    public static getMetaDataFromDecoratorType(target: Object, dType: DecoratorType): Array<any> {
+        if (!target || dType == undefined || dType == null) {
+            winstonLog.logError('target and decorator cannot be null or undefined');
+            throw TypeError('target and decorator cannot be null or undefined');
+        }
+
+        var metaKey = MetadataHelper.getMetaKey(target);
+       
+        if (!_metadataRoot.get(metaKey)) {
+            return null;
+        }
+
+        let decoratorsData = Enumerable.from(_metadataRoot.get(metaKey))
+            .select(keyVal => keyVal.value)
+            .toArray();
+        let decoratorTypeData = [];
+        for (let d in decoratorsData) {
+            let meta = decoratorsData[d];
+            if (meta[MetadataConstants.CLASSDECORATOR_PROPKEY] && meta[MetadataConstants.CLASSDECORATOR_PROPKEY].modelType === dType) {
+                decoratorTypeData.push(meta[MetadataConstants.CLASSDECORATOR_PROPKEY]);
+            }
+        }
+        return decoratorTypeData;     
+    }
+
     private static getAllMetaDataForDecorator(target: Object, decorator: string): Array<MetaData> {
         if (!target || !decorator) {
             winstonLog.logError('target and decorator cannot be null or undefined');
@@ -210,14 +270,20 @@ class MetadataHelper {
         }
 
         var metaKey = MetadataHelper.getMetaKey(target);
+        let cacheKey = metaKey.constructor.name + "_" + decorator;
+        if (_decoratorsCache[cacheKey]) {
+            return _decoratorsCache[cacheKey];
+        }
 
         if (!_metadataRoot.get(metaKey)) {
             return null;
         }
 
-        return Enumerable.from(_metadataRoot.get(metaKey)[decorator])
+        let decoratorsData = Enumerable.from(_metadataRoot.get(metaKey)[decorator])
             .select(keyVal => keyVal.value)
             .toArray();
+        _decoratorsCache[cacheKey] = decoratorsData;
+        return decoratorsData;      
     }
 
     private static getMetaDataForTargetDecoratorAndPropKey(
@@ -254,6 +320,75 @@ class MetadataHelper {
         }
         return false;
     }
-}
 
+
+    public static getDescriptiveMetadata(type, baseRelMeta, recursionLevel?: number): any {
+        var metas;
+
+        metas = MetaUtils.getMetaDataFromType(type);
+        //var props: { [key: string]: MetaData } = <any>{};
+
+        var metaData = {};
+
+        var properties = [];
+        Enumerable.from(metas).forEach(x => {
+            var m = x as MetaData;
+            if (m.decoratorType == DecoratorType.PROPERTY) {
+                var params: IAssociationParams = <IAssociationParams>m.params;
+                var info = {};
+                info['name'] = m.propertyKey;
+                if (params && params.rel) {
+
+                    if (baseRelMeta) {
+                        var relMeta = baseRelMeta + m.getType().name;
+                        info['href'] = relMeta;
+                    }
+
+                    info['subtype'] = m.getType().name;
+                    info['type'] = m.propertyType.isArray ? "Array" : "Object";
+                    if (!recursionLevel) {
+                        info['metadata'] = this.getDescriptiveMetadata((<any>params.itemType).name, baseRelMeta, 1);
+                        recursionLevel = undefined;
+                    }
+                    if (recursionLevel && recursionLevel <= 4) {
+                        recursionLevel += 1;
+                        info['metadata'] = this.getDescriptiveMetadata((<any>params.itemType).name, baseRelMeta, recursionLevel);
+                        recursionLevel = undefined;
+                    }
+                }
+                else {
+
+
+                    info['type'] = m.propertyType.isArray ? "Array" : m.getType().name;
+                    if (info['type'] != "String" && info['type'] != "Boolean" &&
+                        info['type'] != "Number" && info['type'] != "Date" &&
+                        info['type'] != "Object" && info['type'] != "Array") {
+                        info['type'] = m.propertyType.isArray ? "Array" : "Object";
+                        info['subtype'] = m.getType().name;
+                        if (!recursionLevel) {
+                            info['metadata'] = this.getDescriptiveMetadata(m.getType().name, baseRelMeta, 1);
+                            recursionLevel = undefined;
+                        }
+
+                    }
+
+
+                    //info['rstype'] = m.getType().name;
+                    //info['type'] =  m.propertyType.isArray ? [m.getType().name] : m.getType().name;
+                }
+                properties.push(info);
+
+            }
+        });
+        metaData['id'] = type;
+        metaData['properties'] = properties;
+       
+        return metaData;
+    }
+
+
+}
+export function resetFieldDecoratorCache() {
+    _decoratorsCache = {};
+}
 export var MetaUtils: IMetadataHelper = MetadataHelper;

@@ -1,0 +1,627 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <SchemaVersion>2.0</SchemaVersion>
+        <ProjectGuid>{80f0ed06-efa4-4f3b-87b7-00819cc8c1fc}</ProjectGuid>
+        <ProjectHome>..\</ProjectHome>
+        <ProjectView>ShowAllFiles</ProjectView>
+        <StartupFile>server.ts</StartupFile>
+        <WorkingDirectory>.</WorkingDirectory>
+        <OutputPath>.</OutputPath>
+        <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+        <TypeScriptSourceMap>true</TypeScriptSourceMap>
+        <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
+        <EnableTypeScript>true</EnableTypeScript>
+        <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
+        <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+    <ItemGroup>
+        <Content Include="login.html" />
+        <Content Include="node-data.png" />
+        <Content Include="node-data1.png" />
+        <Content Include="jsdocconf.json" />
+        <Content Include="package.json" />
+        <Content Include="tsconfig.json" />
+        <Content Include="tsd.json" />
+        <Content Include="tslint.json" />
+        <Content Include="typings.json" />
+        <Content Include="Installation.md" />
+        <Content Include="readme-code-uniformity.md" />
+        <Content Include="README.md" />
+        <TypeScriptCompile Include="config.ts" />
+        <TypeScriptCompile Include="current-user-detail-service.ts" />
+        <TypeScriptCompile Include="custom.d.ts" />
+        <TypeScriptCompile Include="index.d.ts" />
+        <TypeScriptCompile Include="security-config.d.ts" />
+        <TypeScriptCompile Include="security-config.ts" />
+        <TypeScriptCompile Include="server.ts" />
+        <TypeScriptCompile Include="worker.ts" />
+        <Compile Include="config.js" />
+        <Compile Include="current-user-detail-service.js" />
+        <Compile Include="gulpfile.js" />
+        <Compile Include="security-config.js" />
+        <Compile Include="server.js" />
+        <Compile Include="worker.js" />
+        <TypeScriptCompile Include="core\config.ts" />
+        <TypeScriptCompile Include="core\index.ts" />
+        <Compile Include="core\config.js" />
+        <Compile Include="core\index.js" />
+        <TypeScriptCompile Include="di\di.spec.ts" />
+        <TypeScriptCompile Include="di\di.ts" />
+        <TypeScriptCompile Include="di\index.ts" />
+        <Compile Include="di\di.js" />
+        <Compile Include="di\di.spec.js" />
+        <Compile Include="di\index.js" />
+        <Content Include="images\atlassian.png" />
+        <Content Include="images\realsociable.png" />
+        <Content Include="images\talentica.png" />
+        <Content Include="images\talentica_old.png" />
+        <TypeScriptCompile Include="logging\index.ts" />
+        <TypeScriptCompile Include="logging\winstonLog.ts" />
+        <Compile Include="logging\index.js" />
+        <Compile Include="logging\winstonLog.js" />
+        <TypeScriptCompile Include="models\baseModel.ts" />
+        <TypeScriptCompile Include="models\blogPostSqlModel.ts" />
+        <TypeScriptCompile Include="models\blogSqlModel.ts" />
+        <TypeScriptCompile Include="models\IWorkerProcess.ts" />
+        <TypeScriptCompile Include="models\session.ts" />
+        <TypeScriptCompile Include="models\storyModel.ts" />
+        <Compile Include="models\baseModel.js" />
+        <Compile Include="models\blogPostSqlModel.js" />
+        <Compile Include="models\blogSqlModel.js" />
+        <Compile Include="models\IWorkerProcess.js" />
+        <Compile Include="models\session.js" />
+        <Compile Include="models\storyModel.js" />
+        <TypeScriptCompile Include="mongoose\datatype.ts" />
+        <TypeScriptCompile Include="mongoose\db.ts" />
+        <TypeScriptCompile Include="mongoose\dynamic-schema.ts" />
+        <TypeScriptCompile Include="mongoose\index.ts" />
+        <TypeScriptCompile Include="mongoose\mongoose-model-helper.ts" />
+        <TypeScriptCompile Include="mongoose\mongoose-model.spec.ts" />
+        <TypeScriptCompile Include="mongoose\mongoose-model.ts" />
+        <TypeScriptCompile Include="mongoose\mongoose-service.ts" />
+        <TypeScriptCompile Include="mongoose\mongooseSchemaGenerator.ts" />
+        <TypeScriptCompile Include="mongoose\schema.ts" />
+        <Compile Include="mongoose\datatype.js" />
+        <Compile Include="mongoose\db.js" />
+        <Compile Include="mongoose\dynamic-schema.js" />
+        <Compile Include="mongoose\index.js" />
+        <Compile Include="mongoose\mongoose-model-helper.js" />
+        <Compile Include="mongoose\mongoose-model.js" />
+        <Compile Include="mongoose\mongoose-model.spec.js" />
+        <Compile Include="mongoose\mongoose-service.js" />
+        <Compile Include="mongoose\mongooseSchemaGenerator.js" />
+        <Compile Include="mongoose\schema.js" />
+        <Content Include="postman_scripts\Embedded_child.postman_collection.json" />
+        <Content Include="postman_scripts\WorkerAndProcessControlTest.json" />
+        <TypeScriptCompile Include="repositories\AuthorizationRepository.ts" />
+        <TypeScriptCompile Include="repositories\blogPostsqlrepository.ts" />
+        <TypeScriptCompile Include="repositories\blogsqlrepository.ts" />
+        <TypeScriptCompile Include="repositories\storyrepository.ts" />
+        <Compile Include="repositories\AuthorizationRepository.js" />
+        <Compile Include="repositories\blogPostsqlrepository.js" />
+        <Compile Include="repositories\blogsqlrepository.js" />
+        <Compile Include="repositories\storyrepository.js" />
+        <Compile Include="scripts\ci-version-devbuild.js" />
+        <TypeScriptCompile Include="search\elasticSearchUtils.ts" />
+        <Compile Include="search\elasticSearchUtils.js" />
+        <TypeScriptCompile Include="sequelizeimp\datatype.ts" />
+        <TypeScriptCompile Include="sequelizeimp\dynamic-schema.ts" />
+        <TypeScriptCompile Include="sequelizeimp\index.ts" />
+        <TypeScriptCompile Include="sequelizeimp\schema.ts" />
+        <TypeScriptCompile Include="sequelizeimp\sequelizeService.ts" />
+        <Compile Include="sequelizeimp\datatype.js" />
+        <Compile Include="sequelizeimp\dynamic-schema.js" />
+        <Compile Include="sequelizeimp\index.js" />
+        <Compile Include="sequelizeimp\schema.js" />
+        <Compile Include="sequelizeimp\sequelizeService.js" />
+        <TypeScriptCompile Include="tests\preauth-service.ts" />
+        <Compile Include="tests\preauth-service.js" />
+        <TypeScriptCompile Include="typings\index.d.ts" />
+        <TypeScriptCompile Include="unit-test\InitializeModels.ts" />
+        <TypeScriptCompile Include="unit-test\MockDataForRelation.ts" />
+        <Compile Include="unit-test\InitializeModels.js" />
+        <Compile Include="unit-test\MockDataForRelation.js" />
+        <Content Include="views\authlogin.ejs" />
+        <Content Include="views\home.ejs" />
+        <Content Include="views\login.ejs" />
+        <TypeScriptCompile Include="core\api\metadataController.ts" />
+        <Compile Include="core\api\metadataController.js" />
+        <TypeScriptCompile Include="core\constants\constantKeys.ts" />
+        <TypeScriptCompile Include="core\constants\decorators.ts" />
+        <TypeScriptCompile Include="core\constants\index.ts" />
+        <TypeScriptCompile Include="core\constants\metadata.ts" />
+        <TypeScriptCompile Include="core\constants\reflect.ts" />
+        <Compile Include="core\constants\constantKeys.js" />
+        <Compile Include="core\constants\decorators.js" />
+        <Compile Include="core\constants\index.js" />
+        <Compile Include="core\constants\metadata.js" />
+        <Compile Include="core\constants\reflect.js" />
+        <TypeScriptCompile Include="core\decorators\allowanonymous.ts" />
+        <TypeScriptCompile Include="core\decorators\association.ts" />
+        <TypeScriptCompile Include="core\decorators\authorize.ts" />
+        <TypeScriptCompile Include="core\decorators\entityAction.ts" />
+        <TypeScriptCompile Include="core\decorators\index.ts" />
+        <TypeScriptCompile Include="core\decorators\jsonignore.ts" />
+        <TypeScriptCompile Include="core\decorators\optimisticlocking.ts" />
+        <TypeScriptCompile Include="core\decorators\postfilter.ts" />
+        <TypeScriptCompile Include="core\decorators\preauthorize.ts" />
+        <TypeScriptCompile Include="core\decorators\processControl.ts" />
+        <TypeScriptCompile Include="core\decorators\promisable.ts" />
+        <TypeScriptCompile Include="core\decorators\repository.ts" />
+        <TypeScriptCompile Include="core\decorators\required.ts" />
+        <TypeScriptCompile Include="core\decorators\transient.ts" />
+        <TypeScriptCompile Include="core\decorators\upload.ts" />
+        <TypeScriptCompile Include="core\decorators\worker.spec.ts" />
+        <TypeScriptCompile Include="core\decorators\workerAssociation.ts" />
+        <Compile Include="core\decorators\allowanonymous.js" />
+        <Compile Include="core\decorators\association.js" />
+        <Compile Include="core\decorators\authorize.js" />
+        <Compile Include="core\decorators\entityAction.js" />
+        <Compile Include="core\decorators\index.js" />
+        <Compile Include="core\decorators\jsonignore.js" />
+        <Compile Include="core\decorators\optimisticlocking.js" />
+        <Compile Include="core\decorators\postfilter.js" />
+        <Compile Include="core\decorators\preauthorize.js" />
+        <Compile Include="core\decorators\processControl.js" />
+        <Compile Include="core\decorators\promisable.js" />
+        <Compile Include="core\decorators\repository.js" />
+        <Compile Include="core\decorators\required.js" />
+        <Compile Include="core\decorators\transient.js" />
+        <Compile Include="core\decorators\upload.js" />
+        <Compile Include="core\decorators\worker.spec.js" />
+        <Compile Include="core\decorators\workerAssociation.js" />
+        <TypeScriptCompile Include="core\dynamic\crud.entity.ts" />
+        <TypeScriptCompile Include="core\dynamic\dynamic-controller.ts" />
+        <TypeScriptCompile Include="core\dynamic\dynamic-repository.ts" />
+        <TypeScriptCompile Include="core\dynamic\model-entity.ts" />
+        <TypeScriptCompile Include="core\dynamic\security-impl.ts" />
+        <Compile Include="core\dynamic\crud.entity.js" />
+        <Compile Include="core\dynamic\dynamic-controller.js" />
+        <Compile Include="core\dynamic\dynamic-repository.js" />
+        <Compile Include="core\dynamic\model-entity.js" />
+        <Compile Include="core\dynamic\security-impl.js" />
+        <TypeScriptCompile Include="core\enums\decorator-type.ts" />
+        <TypeScriptCompile Include="core\enums\entity-change.ts" />
+        <TypeScriptCompile Include="core\enums\index.ts" />
+        <TypeScriptCompile Include="core\enums\jsonignore-enum.ts" />
+        <TypeScriptCompile Include="core\enums\optimisticlock-type.ts" />
+        <TypeScriptCompile Include="core\enums\repo-actions-enum.ts" />
+        <TypeScriptCompile Include="core\enums\storage-type-enum.ts" />
+        <Compile Include="core\enums\decorator-type.js" />
+        <Compile Include="core\enums\entity-change.js" />
+        <Compile Include="core\enums\index.js" />
+        <Compile Include="core\enums\jsonignore-enum.js" />
+        <Compile Include="core\enums\optimisticlock-type.js" />
+        <Compile Include="core\enums\repo-actions-enum.js" />
+        <Compile Include="core\enums\storage-type-enum.js" />
+        <TypeScriptCompile Include="core\exports\index.ts" />
+        <TypeScriptCompile Include="core\exports\repositories.ts" />
+        <TypeScriptCompile Include="core\exports\router.ts" />
+        <TypeScriptCompile Include="core\exports\schemas.ts" />
+        <Compile Include="core\exports\index.js" />
+        <Compile Include="core\exports\repositories.js" />
+        <Compile Include="core\exports\router.js" />
+        <Compile Include="core\exports\schemas.js" />
+        <TypeScriptCompile Include="core\initialize\initialize-controllers.ts" />
+        <TypeScriptCompile Include="core\initialize\initialize-messengers.ts" />
+        <TypeScriptCompile Include="core\initialize\initialize-repositories.ts" />
+        <TypeScriptCompile Include="core\initialize\initialize-sockets.ts" />
+        <TypeScriptCompile Include="core\initialize\initialize.ts" />
+        <Compile Include="core\initialize\initialize-controllers.js" />
+        <Compile Include="core\initialize\initialize-messengers.js" />
+        <Compile Include="core\initialize\initialize-repositories.js" />
+        <Compile Include="core\initialize\initialize-scokets.js" />
+        <Compile Include="core\initialize\initialize-sockets.js" />
+        <Compile Include="core\initialize\initialize.js" />
+        <TypeScriptCompile Include="core\interfaces\entity-service.ts" />
+        <TypeScriptCompile Include="core\interfaces\queryOptions.ts" />
+        <TypeScriptCompile Include="core\interfaces\schema-generator.ts" />
+        <TypeScriptCompile Include="core\interfaces\shard-Info.ts" />
+        <Compile Include="core\interfaces\entity-service.js" />
+        <Compile Include="core\interfaces\queryOptions.js" />
+        <Compile Include="core\interfaces\schema-generator.js" />
+        <Compile Include="core\interfaces\shard-Info.js" />
+        <TypeScriptCompile Include="core\metadata\actionUtils.ts" />
+        <TypeScriptCompile Include="core\metadata\metadata.ts" />
+        <TypeScriptCompile Include="core\metadata\param-type-custom.ts" />
+        <TypeScriptCompile Include="core\metadata\searchUtils.ts" />
+        <TypeScriptCompile Include="core\metadata\utils-mock.ts" />
+        <TypeScriptCompile Include="core\metadata\utils.spec.ts" />
+        <TypeScriptCompile Include="core\metadata\utils.ts" />
+        <Compile Include="core\metadata\actionUtils.js" />
+        <Compile Include="core\metadata\metadata.js" />
+        <Compile Include="core\metadata\param-type-custom.js" />
+        <Compile Include="core\metadata\searchUtils.js" />
+        <Compile Include="core\metadata\utils-mock.js" />
+        <Compile Include="core\metadata\utils.js" />
+        <Compile Include="core\metadata\utils.spec.js" />
+        <TypeScriptCompile Include="core\reflect\reflect-utils.ts" />
+        <Compile Include="core\reflect\reflect-utils.js" />
+        <TypeScriptCompile Include="core\services\instance-service.ts" />
+        <TypeScriptCompile Include="core\services\post-filter-service.ts" />
+        <TypeScriptCompile Include="core\services\pre-auth-service.ts" />
+        <TypeScriptCompile Include="core\services\workerProcessService.ts" />
+        <Compile Include="core\services\instance-service.js" />
+        <Compile Include="core\services\post-filter-service.js" />
+        <Compile Include="core\services\pre-auth-service.js" />
+        <Compile Include="core\services\workerProcessService.js" />
+        <TypeScriptCompile Include="core\utils\classtype.ts" />
+        <TypeScriptCompile Include="core\utils\index.ts" />
+        <TypeScriptCompile Include="core\utils\nodemodule-type.ts" />
+        <TypeScriptCompile Include="core\utils\types.ts" />
+        <Compile Include="core\utils\classtype.js" />
+        <Compile Include="core\utils\index.js" />
+        <Compile Include="core\utils\nodemodule-type.js" />
+        <Compile Include="core\utils\types.js" />
+        <TypeScriptCompile Include="core\decorators\interfaces\association-params.ts" />
+        <TypeScriptCompile Include="core\decorators\interfaces\decorator-metadata.ts" />
+        <TypeScriptCompile Include="core\decorators\interfaces\decorator-params.ts" />
+        <TypeScriptCompile Include="core\decorators\interfaces\index.ts" />
+        <TypeScriptCompile Include="core\decorators\interfaces\IProcessControlParams.ts" />
+        <TypeScriptCompile Include="core\decorators\interfaces\IProcessControlService.ts" />
+        <TypeScriptCompile Include="core\decorators\interfaces\postfilter-params.ts" />
+        <TypeScriptCompile Include="core\decorators\interfaces\preauthorize-params.ts" />
+        <TypeScriptCompile Include="core\decorators\interfaces\repository-params.ts" />
+        <TypeScriptCompile Include="core\decorators\interfaces\response.ts" />
+        <TypeScriptCompile Include="core\decorators\interfaces\worker-params.ts" />
+        <TypeScriptCompile Include="core\decorators\interfaces\workerassociation-params.ts" />
+        <TypeScriptCompile Include="core\decorators\interfaces\workerParamsDto.ts" />
+        <Compile Include="core\decorators\interfaces\association-params.js" />
+        <Compile Include="core\decorators\interfaces\decorator-metadata.js" />
+        <Compile Include="core\decorators\interfaces\decorator-params.js" />
+        <Compile Include="core\decorators\interfaces\index.js" />
+        <Compile Include="core\decorators\interfaces\IProcessControlParams.js" />
+        <Compile Include="core\decorators\interfaces\IProcessControlService.js" />
+        <Compile Include="core\decorators\interfaces\postfilter-params.js" />
+        <Compile Include="core\decorators\interfaces\preauthorize-params.js" />
+        <Compile Include="core\decorators\interfaces\repository-params.js" />
+        <Compile Include="core\decorators\interfaces\response.js" />
+        <Compile Include="core\decorators\interfaces\worker-params.js" />
+        <Compile Include="core\decorators\interfaces\workerassociation-params.js" />
+        <Compile Include="core\decorators\interfaces\workerParamsDto.js" />
+        <TypeScriptCompile Include="core\metadata\interfaces\decorator-metadata.ts" />
+        <TypeScriptCompile Include="core\metadata\interfaces\field-metadata.ts" />
+        <TypeScriptCompile Include="core\metadata\interfaces\metaroot.ts" />
+        <Compile Include="core\metadata\interfaces\decorator-metadata.js" />
+        <Compile Include="core\metadata\interfaces\field-metadata.js" />
+        <Compile Include="core\metadata\interfaces\metaroot.js" />
+        <TypeScriptCompile Include="decorators\interfaces\authorization-params.ts" />
+        <Compile Include="decorators\interfaces\authorization-params.js" />
+        <TypeScriptCompile Include="decorators\metadata\searchUtils.spec.ts" />
+        <Compile Include="decorators\metadata\searchUtils.spec.js" />
+        <TypeScriptCompile Include="di\decorators\index.ts" />
+        <TypeScriptCompile Include="di\decorators\inject.ts" />
+        <TypeScriptCompile Include="di\decorators\service.ts" />
+        <Compile Include="di\decorators\index.js" />
+        <Compile Include="di\decorators\inject.js" />
+        <Compile Include="di\decorators\service.js" />
+        <TypeScriptCompile Include="di\tests\cyclic-a.ts" />
+        <TypeScriptCompile Include="di\tests\cyclic-b.ts" />
+        <TypeScriptCompile Include="di\tests\service-a.ts" />
+        <TypeScriptCompile Include="di\tests\service-b.ts" />
+        <TypeScriptCompile Include="di\tests\service-c.ts" />
+        <TypeScriptCompile Include="di\tests\service-d.ts" />
+        <TypeScriptCompile Include="di\tests\service-e.ts" />
+        <Compile Include="di\tests\cyclic-a.js" />
+        <Compile Include="di\tests\cyclic-b.js" />
+        <Compile Include="di\tests\service-a.js" />
+        <Compile Include="di\tests\service-b.js" />
+        <Compile Include="di\tests\service-c.js" />
+        <Compile Include="di\tests\service-d.js" />
+        <Compile Include="di\tests\service-e.js" />
+        <TypeScriptCompile Include="di\decorators\interfaces\inject-params.ts" />
+        <Compile Include="di\decorators\interfaces\inject-params.js" />
+        <TypeScriptCompile Include="mongoose\constants\decorators.ts" />
+        <TypeScriptCompile Include="mongoose\constants\index.ts" />
+        <Compile Include="mongoose\constants\decorators.js" />
+        <Compile Include="mongoose\constants\index.js" />
+        <TypeScriptCompile Include="mongoose\decorators\document.ts" />
+        <TypeScriptCompile Include="mongoose\decorators\entity.ts" />
+        <TypeScriptCompile Include="mongoose\decorators\field.ts" />
+        <TypeScriptCompile Include="mongoose\decorators\index.ts" />
+        <Compile Include="mongoose\decorators\document.js" />
+        <Compile Include="mongoose\decorators\entity.js" />
+        <Compile Include="mongoose\decorators\field.js" />
+        <Compile Include="mongoose\decorators\index.js" />
+        <TypeScriptCompile Include="mongoose\enums\document-strict.ts" />
+        <TypeScriptCompile Include="mongoose\enums\index.ts" />
+        <Compile Include="mongoose\enums\document-strict.js" />
+        <Compile Include="mongoose\enums\index.js" />
+        <TypeScriptCompile Include="mongoose\pubsub\messenger.ts" />
+        <TypeScriptCompile Include="mongoose\pubsub\model.ts" />
+        <Compile Include="mongoose\pubsub\messenger.js" />
+        <Compile Include="mongoose\pubsub\model.js" />
+        <TypeScriptCompile Include="mongoose\utils\index.ts" />
+        <Compile Include="mongoose\utils\index.js" />
+        <TypeScriptCompile Include="mongoose\decorators\interfaces\document-params.ts" />
+        <TypeScriptCompile Include="mongoose\decorators\interfaces\field-params.ts" />
+        <TypeScriptCompile Include="mongoose\decorators\interfaces\index.ts" />
+        <Compile Include="mongoose\decorators\interfaces\document-params.js" />
+        <Compile Include="mongoose\decorators\interfaces\field-params.js" />
+        <Compile Include="mongoose\decorators\interfaces\index.js" />
+        <TypeScriptCompile Include="security\auth\auth-service.spec.ts" />
+        <TypeScriptCompile Include="security\auth\auth-service.ts" />
+        <TypeScriptCompile Include="security\auth\authcontroller.spec.ts" />
+        <TypeScriptCompile Include="security\auth\authcontroller.ts" />
+        <TypeScriptCompile Include="security\auth\autherizationParam.ts" />
+        <TypeScriptCompile Include="security\auth\domain.ts" />
+        <TypeScriptCompile Include="security\auth\principalContext.ts" />
+        <TypeScriptCompile Include="security\auth\security-utils.spec.ts" />
+        <TypeScriptCompile Include="security\auth\security-utils.ts" />
+        <TypeScriptCompile Include="security\auth\user-detail-service.ts" />
+        <TypeScriptCompile Include="security\auth\user-details.ts" />
+        <TypeScriptCompile Include="security\auth\user.ts" />
+        <Compile Include="security\auth\auth-service.js" />
+        <Compile Include="security\auth\auth-service.spec.js" />
+        <Compile Include="security\auth\authcontroller.js" />
+        <Compile Include="security\auth\authcontroller.spec.js" />
+        <Compile Include="security\auth\autherizationParam.js" />
+        <Compile Include="security\auth\domain.js" />
+        <Compile Include="security\auth\principalContext.js" />
+        <Compile Include="security\auth\security-utils.js" />
+        <Compile Include="security\auth\security-utils.spec.js" />
+        <Compile Include="security\auth\user-detail-service.js" />
+        <Compile Include="security\auth\user-details.js" />
+        <Compile Include="security\auth\user.js" />
+        <TypeScriptCompile Include="sequelizeimp\constants\decorators.ts" />
+        <TypeScriptCompile Include="sequelizeimp\constants\index.ts" />
+        <Compile Include="sequelizeimp\constants\decorators.js" />
+        <Compile Include="sequelizeimp\constants\index.js" />
+        <TypeScriptCompile Include="sequelizeimp\decorators\column.ts" />
+        <TypeScriptCompile Include="sequelizeimp\decorators\entity.ts" />
+        <TypeScriptCompile Include="sequelizeimp\decorators\index.ts" />
+        <TypeScriptCompile Include="sequelizeimp\decorators\transient.ts" />
+        <Compile Include="sequelizeimp\decorators\column.js" />
+        <Compile Include="sequelizeimp\decorators\entity.js" />
+        <Compile Include="sequelizeimp\decorators\index.js" />
+        <Compile Include="sequelizeimp\decorators\transient.js" />
+        <TypeScriptCompile Include="sequelizeimp\enums\entity-strict.ts" />
+        <TypeScriptCompile Include="sequelizeimp\enums\index.ts" />
+        <Compile Include="sequelizeimp\enums\entity-strict.js" />
+        <Compile Include="sequelizeimp\enums\index.js" />
+        <TypeScriptCompile Include="sequelizeimp\utils\index.ts" />
+        <Compile Include="sequelizeimp\utils\index.js" />
+        <TypeScriptCompile Include="sequelizeimp\decorators\interfaces\column-params.ts" />
+        <TypeScriptCompile Include="sequelizeimp\decorators\interfaces\entity-params.ts" />
+        <TypeScriptCompile Include="sequelizeimp\decorators\interfaces\index.ts" />
+        <Compile Include="sequelizeimp\decorators\interfaces\column-params.js" />
+        <Compile Include="sequelizeimp\decorators\interfaces\entity-params.js" />
+        <Compile Include="sequelizeimp\decorators\interfaces\index.js" />
+        <Content Include="spec\support\jasmine.json" />
+        <TypeScriptCompile Include="tests\models\baseModel.ts" />
+        <TypeScriptCompile Include="tests\models\city.ts" />
+        <TypeScriptCompile Include="tests\models\company.ts" />
+        <TypeScriptCompile Include="tests\models\employee.ts" />
+        <TypeScriptCompile Include="tests\models\processControlModel.ts" />
+        <TypeScriptCompile Include="tests\models\role.ts" />
+        <TypeScriptCompile Include="tests\models\rolemodel.ts" />
+        <TypeScriptCompile Include="tests\models\school.ts" />
+        <TypeScriptCompile Include="tests\models\subject.ts" />
+        <TypeScriptCompile Include="tests\models\teacher.ts" />
+        <TypeScriptCompile Include="tests\models\topic.ts" />
+        <TypeScriptCompile Include="tests\models\user.ts" />
+        <TypeScriptCompile Include="tests\models\usermodel.ts" />
+        <Compile Include="tests\models\baseModel.js" />
+        <Compile Include="tests\models\city.js" />
+        <Compile Include="tests\models\company.js" />
+        <Compile Include="tests\models\employee.js" />
+        <Compile Include="tests\models\processControlModel.js" />
+        <Compile Include="tests\models\role.js" />
+        <Compile Include="tests\models\rolemodel.js" />
+        <Compile Include="tests\models\school.js" />
+        <Compile Include="tests\models\subject.js" />
+        <Compile Include="tests\models\teacher.js" />
+        <Compile Include="tests\models\topic.js" />
+        <Compile Include="tests\models\user.js" />
+        <Compile Include="tests\models\usermodel.js" />
+        <TypeScriptCompile Include="tests\repositories\cityRepository.ts" />
+        <TypeScriptCompile Include="tests\repositories\companyRepository.ts" />
+        <TypeScriptCompile Include="tests\repositories\employeeRepository.ts" />
+        <TypeScriptCompile Include="tests\repositories\processControlRepository.ts" />
+        <TypeScriptCompile Include="tests\repositories\promisableTestRepository.ts" />
+        <TypeScriptCompile Include="tests\repositories\role.repository.ts" />
+        <TypeScriptCompile Include="tests\repositories\schoolRepository.ts" />
+        <TypeScriptCompile Include="tests\repositories\subjectRepository.ts" />
+        <TypeScriptCompile Include="tests\repositories\teacherRepository.ts" />
+        <TypeScriptCompile Include="tests\repositories\topicRepository.ts" />
+        <TypeScriptCompile Include="tests\repositories\userRepository.ts" />
+        <Compile Include="tests\repositories\cityRepository.js" />
+        <Compile Include="tests\repositories\companyRepository.js" />
+        <Compile Include="tests\repositories\employeeRepository.js" />
+        <Compile Include="tests\repositories\processControlRepository.js" />
+        <Compile Include="tests\repositories\promisableTestRepository.js" />
+        <Compile Include="tests\repositories\role.repository.js" />
+        <Compile Include="tests\repositories\schoolRepository.js" />
+        <Compile Include="tests\repositories\subjectRepository.js" />
+        <Compile Include="tests\repositories\teacherRepository.js" />
+        <Compile Include="tests\repositories\topicRepository.js" />
+        <Compile Include="tests\repositories\userRepository.js" />
+        <TypeScriptCompile Include="tests\services\authorizationService.ts" />
+        <TypeScriptCompile Include="tests\services\processControlService.ts" />
+        <TypeScriptCompile Include="tests\services\teacherService.ts" />
+        <Compile Include="tests\services\authorizationService.js" />
+        <Compile Include="tests\services\processControlService.js" />
+        <Compile Include="tests\services\teacherService.js" />
+        <Content Include="typings\globals\jasmine\typings.json" />
+        <TypeScriptCompile Include="typings\globals\jasmine\index.d.ts" />
+        <Content Include="typings\globals\mongodb\typings.json" />
+        <TypeScriptCompile Include="typings\globals\mongodb\index.d.ts" />
+        <Content Include="typings\globals\mongoose\typings.json" />
+        <TypeScriptCompile Include="typings\globals\mongoose\index.d.ts" />
+        <Content Include="typings\globals\node\typings.json" />
+        <TypeScriptCompile Include="typings\globals\node\index.d.ts" />
+        <Content Include="typings\globals\q\typings.json" />
+        <TypeScriptCompile Include="typings\globals\q\index.d.ts" />
+        <Content Include="typings\globals\winston\typings.json" />
+        <TypeScriptCompile Include="typings\globals\winston\index.d.ts" />
+        <Content Include="typings\modules\express\typings.json" />
+        <TypeScriptCompile Include="typings\modules\express\index.d.ts" />
+        <Content Include="typings\modules\linq\typings.json" />
+        <TypeScriptCompile Include="typings\modules\linq\index.d.ts" />
+        <Content Include="typings\modules\sequelize\typings.json" />
+        <TypeScriptCompile Include="typings\modules\sequelize\index.d.ts" />
+        <TypeScriptCompile Include="unit-test\controllers\format.ts" />
+        <TypeScriptCompile Include="unit-test\controllers\usercontroller.spec.ts" />
+        <TypeScriptCompile Include="unit-test\dto\blogDto.ts" />
+        <TypeScriptCompile Include="unit-test\dto\format.ts" />
+        <TypeScriptCompile Include="unit-test\models\blog.ts" />
+        <TypeScriptCompile Include="unit-test\models\course.ts" />
+        <TypeScriptCompile Include="unit-test\models\format.ts" />
+        <TypeScriptCompile Include="unit-test\models\student.ts" />
+        <TypeScriptCompile Include="unit-test\models\testModels.ts" />
+        <Compile Include="unit-test\models\blog.js" />
+        <Compile Include="unit-test\models\course.js" />
+        <Compile Include="unit-test\models\student.js" />
+        <Compile Include="unit-test\models\testModels.js" />
+        <Content Include="unit-test\OutputFiles\file.txt" />
+        <Content Include="unit-test\OutputFiles\file1.txt" />
+        <TypeScriptCompile Include="unit-test\repository\blogRepository.ts" />
+        <TypeScriptCompile Include="unit-test\repository\user-repository-mock.ts" />
+        <Compile Include="unit-test\repository\blogRepository.js" />
+        <Compile Include="unit-test\repository\user-repository-mock.js" />
+        <TypeScriptCompile Include="unit-test\Sample\format.spec.ts" />
+        <TypeScriptCompile Include="unit-test\Sample\GlobalObject.ts" />
+        <TypeScriptCompile Include="unit-test\Sample\MockService.ts" />
+        <TypeScriptCompile Include="unit-test\Sample\SampleClassA.ts" />
+        <TypeScriptCompile Include="unit-test\Sample\SampleClassB.ts" />
+        <TypeScriptCompile Include="unit-test\sample-tests\format.spec.ts" />
+        <TypeScriptCompile Include="unit-test\sample-tests\GlobalObject.ts" />
+        <TypeScriptCompile Include="unit-test\sample-tests\MockService.ts" />
+        <TypeScriptCompile Include="unit-test\sample-tests\SampleClassA.ts" />
+        <TypeScriptCompile Include="unit-test\sample-tests\SampleClassB.ts" />
+        <TypeScriptCompile Include="unit-test\services\blogServiceImpl.ts" />
+        <TypeScriptCompile Include="unit-test\services\MockAuthService.ts" />
+        <TypeScriptCompile Include="unit-test\services\MockService.ts" />
+        <Compile Include="unit-test\services\blogServiceImpl.js" />
+        <Compile Include="unit-test\services\MockService.js" />
+        <TypeScriptCompile Include="unit-test\services\interface\blogService.ts" />
+        <Compile Include="unit-test\services\interface\blogService.js" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="core" />
+        <Folder Include="core\api" />
+        <Folder Include="core\constants" />
+        <Folder Include="core\decorators" />
+        <Folder Include="core\decorators\interfaces" />
+        <Folder Include="core\dynamic" />
+        <Folder Include="core\enums" />
+        <Folder Include="core\exports" />
+        <Folder Include="core\initialize" />
+        <Folder Include="core\interfaces" />
+        <Folder Include="core\metadata" />
+        <Folder Include="core\metadata\interfaces" />
+        <Folder Include="core\reflect" />
+        <Folder Include="core\services" />
+        <Folder Include="core\utils" />
+        <Folder Include="decorators" />
+        <Folder Include="decorators\interfaces" />
+        <Folder Include="decorators\metadata" />
+        <Folder Include="di" />
+        <Folder Include="di\decorators" />
+        <Folder Include="di\decorators\interfaces" />
+        <Folder Include="di\tests" />
+        <Folder Include="FromExistingCode1" />
+        <Folder Include="FromExistingCode1\FromExistingCode1" />
+        <Folder Include="FromExistingCode2" />
+        <Folder Include="FromExistingCode2\FromExistingCode2" />
+        <Folder Include="FromExistingCode3" />
+        <Folder Include="FromExistingCode3\FromExistingCode3" />
+        <Folder Include="images" />
+        <Folder Include="logging" />
+        <Folder Include="models" />
+        <Folder Include="mongoose" />
+        <Folder Include="mongoose\constants" />
+        <Folder Include="mongoose\decorators" />
+        <Folder Include="mongoose\decorators\interfaces" />
+        <Folder Include="mongoose\enums" />
+        <Folder Include="mongoose\pubsub" />
+        <Folder Include="mongoose\utils" />
+        <Folder Include="postman_scripts" />
+        <Folder Include="repositories" />
+        <Folder Include="scripts" />
+        <Folder Include="search" />
+        <Folder Include="security" />
+        <Folder Include="security\auth" />
+        <Folder Include="sequelizeimp" />
+        <Folder Include="sequelizeimp\constants" />
+        <Folder Include="sequelizeimp\decorators" />
+        <Folder Include="sequelizeimp\decorators\interfaces" />
+        <Folder Include="sequelizeimp\enums" />
+        <Folder Include="sequelizeimp\utils" />
+        <Folder Include="spec" />
+        <Folder Include="spec\support" />
+        <Folder Include="tests" />
+        <Folder Include="tests\models" />
+        <Folder Include="tests\repositories" />
+        <Folder Include="tests\services" />
+        <Folder Include="typings" />
+        <Folder Include="typings\globals" />
+        <Folder Include="typings\globals\jasmine" />
+        <Folder Include="typings\globals\mongodb" />
+        <Folder Include="typings\globals\mongoose" />
+        <Folder Include="typings\globals\node" />
+        <Folder Include="typings\globals\q" />
+        <Folder Include="typings\globals\winston" />
+        <Folder Include="typings\modules" />
+        <Folder Include="typings\modules\express" />
+        <Folder Include="typings\modules\linq" />
+        <Folder Include="typings\modules\sequelize" />
+        <Folder Include="unit-test" />
+        <Folder Include="unit-test\controllers" />
+        <Folder Include="unit-test\dto" />
+        <Folder Include="unit-test\models" />
+        <Folder Include="unit-test\OutputFiles" />
+        <Folder Include="unit-test\repository" />
+        <Folder Include="unit-test\Sample" />
+        <Folder Include="unit-test\sample-tests" />
+        <Folder Include="unit-test\services" />
+        <Folder Include="unit-test\services\interface" />
+        <Folder Include="views" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
+    <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+    <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+    <ProjectExtensions>
+        <VisualStudio>
+          <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+            <WebProjectProperties>
+              <UseIIS>False</UseIIS>
+              <AutoAssignPort>True</AutoAssignPort>
+              <DevelopmentServerPort>0</DevelopmentServerPort>
+              <DevelopmentServerVPath>/</DevelopmentServerVPath>
+              <IISUrl>http://localhost:48022/</IISUrl>
+              <NTLMAuthentication>False</NTLMAuthentication>
+              <UseCustomServer>True</UseCustomServer>
+              <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+              <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+            </WebProjectProperties>
+          </FlavorProperties>
+          <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+            <WebProjectProperties>
+              <StartPageUrl>
+              </StartPageUrl>
+              <StartAction>CurrentPage</StartAction>
+              <AspNetDebugging>True</AspNetDebugging>
+              <SilverlightDebugging>False</SilverlightDebugging>
+              <NativeDebugging>False</NativeDebugging>
+              <SQLDebugging>False</SQLDebugging>
+              <ExternalProgram>
+              </ExternalProgram>
+              <StartExternalURL>
+              </StartExternalURL>
+              <StartCmdLineArguments>
+              </StartCmdLineArguments>
+              <StartWorkingDirectory>
+              </StartWorkingDirectory>
+              <EnableENC>False</EnableENC>
+              <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+            </WebProjectProperties>
+          </FlavorProperties>
+        </VisualStudio>
+    </ProjectExtensions>
+</Project>

@@ -1,12 +1,16 @@
-﻿import {repository, allowanonymous} from "../../core/decorators";
+﻿import {repository, allowanonymous, OptimisticLocking} from "../../core/decorators";
+import {OptimisticLockType} from "../../core/enums/optimisticlock-type";
 import {subject} from '../models/subject';
 import {DynamicRepository} from '../../core/dynamic/dynamic-repository';
 import {authorize} from '../../core/decorators/authorize';
 import {preauthorize} from '../../core/decorators/preauthorize';
 import {postfilter} from '../../core/decorators/postfilter';
+import {AuthorizationRepository} from '../../repositories/authorizationRepository';
+import {entityAction, EntityActionParam} from '../../core/decorators/entityAction';
+import Q = require('q');
 
 @repository({ path: 'subject', model: subject })
-export default class CourseRepository extends DynamicRepository {
+export default class CourseRepository extends AuthorizationRepository {
 
     //@authorize({ roles: ['ROLE_A'] })
     //@postfilter({ serviceName: "preauthservice", methodName: "PostFilter" })
@@ -14,6 +18,11 @@ export default class CourseRepository extends DynamicRepository {
     @allowanonymous()
     findAll(): Q.Promise<any> {
         return super.findAll();
+    }
+
+    //@OptimisticLocking({ type: OptimisticLockType.VERSION })
+    put(id: any, obj: any): Q.Promise<any> {
+        return super.put(id, obj);
     }
 
     @preauthorize({ serviceName: "preauthservice", methodName: "CanEdit1" })
@@ -25,5 +34,25 @@ export default class CourseRepository extends DynamicRepository {
     @postfilter({ serviceName: "preauthservice", methodName: "PostFilter" })
     public findByField(fieldName, value): Q.Promise<any> {
         return super.findByField(fieldName, value);
+    }
+
+    preRead(params: EntityActionParam): Q.Promise<EntityActionParam> {
+        return Q.when(params);
+    }
+
+    postRead(params: EntityActionParam): Q.Promise<any> {
+        let curEntity = params.newPersistentEntity;
+        if (curEntity.delete) {
+            return Q.when(undefined);
+        }
+      return Q.when(params);
+    }
+
+    postBulkRead(params: Array<EntityActionParam>): Q.Promise<Array<EntityActionParam>> {
+        return Q.when(params.filter((entity) => { return !entity.newPersistentEntity.delete }));
+    }
+
+    preBulkRead(params: Array<EntityActionParam>): Q.Promise<Array<EntityActionParam>> {
+        return Q.when(params);
     }
 }
